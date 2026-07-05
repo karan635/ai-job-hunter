@@ -43,12 +43,12 @@ export default function Navbar() {
 
         {/* Buttons */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="text-white hover:bg-zinc-800">
-            Sign In
+          <Button  variant="ghost" className="text-white hover:bg-zinc-800">
+            <Link href="/sign-in">Sign In</Link>
           </Button>
 
           <Button className="bg-violet-600 hover:bg-violet-700">
-            Get Started
+            <Link href="/sign-up">Get Started</Link>
           </Button>
         </div>
       </div>
