@@ -4,59 +4,67 @@ import { useRef } from "react";
 import { UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-
+import type { Resume } from "@/app/dashboard/resume/page";
 
 interface UploadResumeProps {
   selectedFile: File | null;
   setSelectedFile: React.Dispatch<
     React.SetStateAction<File | null>
   >;
+
+  setResume: React.Dispatch<
+    React.SetStateAction<Resume | null>
+  >;
 }
 
 export default function UploadResume({
   selectedFile,
   setSelectedFile,
+  setResume,
 }: UploadResumeProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-
   const { user } = useUser();
-  
+
   const openFilePicker = () => {
     inputRef.current?.click();
   };
-const handleFileChange = async (
-  e: React.ChangeEvent<HTMLInputElement>
-) => {
-  const file = e.target.files?.[0];
 
-  if (!file || !user) return;
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
 
-  try {
-    setSelectedFile(file);
+    if (!file || !user) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("userId", user.id);
+    try {
+      // Show selected file in UI
+      setSelectedFile(file);
 
-    const response = await fetch("/api/upload-resume", {
-      method: "POST",
-      body: formData,
-    });
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", user.id);
 
-    const result = await response.json();
+      const response = await fetch("/api/upload-resume", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (!response.ok) {
-      throw new Error(result.error || "Upload failed");
+      const result = await response.json();
+      setResume(result.resume);
+
+      if (!response.ok) {
+        throw new Error(result.error || "Upload failed");
+      }
+
+      console.log(result);
+
+      alert("Resume uploaded successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed.");
     }
+  };
 
-    console.log(result);
-
-    alert("Resume uploaded successfully!");
-  } catch (err) {
-    console.error(err);
-    alert("Upload failed.");
-  }
-};
   return (
     <div className="rounded-2xl border-2 border-dashed border-zinc-700 bg-zinc-900/40 p-10">
       <div className="flex flex-col items-center">

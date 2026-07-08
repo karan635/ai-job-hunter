@@ -3,7 +3,6 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { extractTextFromPDF } from "@/lib/pdf";
 import { analyzeResume } from "@/lib/analyzeResume";
 
-
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -40,33 +39,63 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save metadata to database
+    // Save Resume Metadata
     const { data: resume, error: dbError } = await supabaseAdmin
-        .from("resumes")
-        .insert({
+      .from("resumes")
+      .insert({
         user_id: userId,
         file_name: file.name,
         storage_path: storagePath,
         file_size: file.size,
         status: "uploaded",
-    })
-    .select()
-        .single();
+      })
+      .select()
+      .single();
 
     if (dbError) {
-        return NextResponse.json(
-            { error: dbError.message },
+      return NextResponse.json(
+        { error: dbError.message },
         { status: 500 }
-        );
+      );
     }
 
+    // Extract Resume Text
     const resumeText = await extractTextFromPDF(buffer);
 
+    // Analyze Resume with AI
+    const analysis = await analyzeResume(resumeText);
 
     console.log("========== AI ANALYSIS ==========");
-    const analysis = await analyzeResume(resumeText);
     console.dir(analysis, { depth: null });
-    console.log("================================");  
+    console.log("================================");
+
+    // Save Analysis
+    const { error: analysisError } = await supabaseAdmin
+      .from("resume_analysis")
+      .insert({
+        resume_id: resume.id,
+        ats_score: analysis.ats_score,
+        strengths: analysis.strengths.join("\n"),
+        weaknesses: analysis.weaknesses.join("\n"),
+        keywords: analysis.skills.join(", "),
+        analysis: analysis,
+      });
+
+    if (analysisError) {
+      console.error("Analysis save failed:", analysisError);
+    }
+
+    // Update Resume Status
+    const { error: updateError } = await supabaseAdmin
+      .from("resumes")
+      .update({
+        status: "analyzed",
+      })
+      .eq("id", resume.id);
+
+    if (updateError) {
+      console.error("Resume status update failed:", updateError);
+    }
 
     return NextResponse.json({
       success: true,
@@ -77,9 +106,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("UPLOAD API ERROR:", error);
 
-
     return NextResponse.json(
-      {  error: error instanceof Error ? error.message : "Unknown error" },
+      {
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

@@ -1,11 +1,17 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import type { Resume } from "@/app/dashboard/resume/page";
+
 interface ResumeListProps {
   selectedFile: File | null;
+  resume: Resume | null;
 }
 
 export default function ResumeList({
   selectedFile,
+  resume,
 }: ResumeListProps) {
-  if (!selectedFile) {
+  if (!selectedFile || !resume) {
     return (
       <div className="mt-10 rounded-xl border border-zinc-800 p-8 text-center text-zinc-500">
         No resume uploaded yet.
@@ -20,16 +26,24 @@ export default function ResumeList({
       </h2>
 
       <p className="mt-4 text-lg text-white">
-        {selectedFile.name}
+        {resume.file_name}
       </p>
 
       <p className="text-sm text-zinc-400">
-        {(selectedFile.size / 1024).toFixed(1)} KB
+        {(resume.file_size / 1024).toFixed(1)} KB
       </p>
 
       <p className="mt-3 inline-block rounded-full bg-green-500/10 px-3 py-1 text-sm text-green-400">
-        Ready for Analysis
+        {resume.status}
       </p>
+
+      <div className="mt-6">
+        <Button>
+          <Link href={`/dashboard/resume/${resume.id}`}>
+            View Analysis
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }
