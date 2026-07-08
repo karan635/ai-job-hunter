@@ -88,7 +88,7 @@ export default function Sidebar() {
   return (
 
     // Sidebar starts here
-    <aside className="flex h-screen w-72 flex-col border-r border-zinc-800 bg-zinc-950">
+    <aside className="fixed left-0 top-0 h-screen w-72 border-r border-zinc-800 bg-zinc-950 flex flex-col">
 
       {/* Logo */}
     <div className="border-b border-zinc-800 p-6">

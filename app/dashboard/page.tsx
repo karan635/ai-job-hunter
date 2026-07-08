@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import StatsGrid from "@/components/dashboard/StatsGrid";
+import QuickActions from "@/components/dashboard/QuickActions";
+import RecentActivity from "@/components/dashboard/RecentActivity";
+
 
 export default function DashboardPage() {
   return (
-    <div>   
-      <h1 className="text-4xl font-bold text-white">
-        Welcome Back 👋
-      </h1>
-
-      <p className="mt-2 text-zinc-400">
-        Lets optimize your career today.
-      </p>
-    </div>
+  <>
+    <DashboardHeader />
+    <StatsGrid />
+    <QuickActions />
+    <RecentActivity />
+  </>
   );
 }
