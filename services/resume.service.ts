@@ -42,13 +42,16 @@ export async function uploadResume(
 export async function getUserResumes(userId: string) {
   const { data, error } = await supabase
     .from("resumes")
-    .select("*")
+    .select(`
+      *,
+      resume_analysis (
+        ats_score
+      )
+    `)
     .eq("user_id", userId)
     .order("uploaded_at", { ascending: false });
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
-  return data;
+  return data ?? [];
 }

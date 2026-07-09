@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 import ResumeHeader from "@/components/resume/ResumeHeader";
 import UploadResume from "@/components/resume/UploadResume";
 import ResumeList from "@/components/resume/ResumeList ";
+import { getUserResumes } from "@/services/resume.service";
 
 export interface Resume {
   id: string;
@@ -12,25 +14,45 @@ export interface Resume {
   file_size: number;
   status: string;
   uploaded_at: string;
+
+  resume_analysis?: {
+    ats_score: number;
+  }[];
 }
 
 export default function ResumePage() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [resume, setResume] = useState<Resume | null>(null);
+  const { user } = useUser();
+
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const loadResumes = async () => {
+      try {
+        const data = await getUserResumes(user.id);
+        setResumes(data || []);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadResumes();
+  }, [user]);
 
   return (
     <>
       <ResumeHeader />
 
-      <UploadResume
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        setResume={setResume}
-      />
+      <UploadResume setResumes={setResumes} />
 
       <ResumeList
-        selectedFile={selectedFile}
-        resume={resume}
+        resumes={resumes}
+        loading={loading}
+        setResumes={setResumes}
       />
     </>
   );

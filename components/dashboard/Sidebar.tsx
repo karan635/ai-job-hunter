@@ -1,4 +1,5 @@
 "use client";
+import { Target } from "lucide-react";
 
 import Link from "next/link";
 import {
@@ -39,11 +40,11 @@ const menu = [
 
   {
 
-    title: "Jobs",
+    title: "Jobs-Match",
 
-    href: "/dashboard/jobs",
+    href: "/dashboard/job-match",
 
-    icon: BriefcaseBusiness,
+    icon: Target,
 
   },
 
