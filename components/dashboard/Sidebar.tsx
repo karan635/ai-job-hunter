@@ -1,5 +1,7 @@
 "use client";
 import { Target } from "lucide-react";
+import { History } from "lucide-react";
+
 
 import Link from "next/link";
 import {
@@ -47,6 +49,14 @@ const menu = [
     icon: Target,
 
   },
+
+  {
+    title: "Job History",
+
+    href: "/dashboard/job-history",
+
+    icon: History,
+},
 
   {
 

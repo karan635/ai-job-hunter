@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { analyzeJobMatch } from "@/lib/analyzeJobMatch";
+import { generateCoverLetter } from "@/lib/generateCoverLetter";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,23 +15,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { jobDescription , resumeId } = await request.json();
+    const { resumeId, jobDescription } = await request.json();
 
     if (!resumeId) {
       return NextResponse.json(
-      { error: "Resume is required." },
-      { status: 400 }
+        { error: "Resume is required." },
+        { status: 400 }
       );
     }
 
     if (!jobDescription) {
       return NextResponse.json(
-        { error: "Job description is required." },
+        { error: "Job Description is required." },
         { status: 400 }
       );
     }
 
-    // Get latest analyzed resume
+    // Fetch selected resume
     const { data: resume, error: resumeError } =
       await supabaseAdmin
         .from("resumes")
@@ -47,14 +47,13 @@ export async function POST(request: NextRequest) {
 
     if (resumeError || !resume) {
       return NextResponse.json(
-        { error: "No analyzed resume found." },
+        { error: "Resume not found." },
         { status: 404 }
       );
     }
 
     const resumeAnalysis =
       resume.resume_analysis?.[0]?.analysis;
-    console.log(JSON.stringify(resume, null, 2));
 
     if (!resumeAnalysis) {
       return NextResponse.json(
@@ -63,25 +62,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // AI Job Match
-    const result = await analyzeJobMatch(
+    const coverLetter = await generateCoverLetter(
       resumeAnalysis,
       jobDescription
     );
 
-    // Save result
-    await supabaseAdmin
-      .from("job_matches")
-      .insert({
-        resume_id: resume.id,
-        company: result.company,
-        role: result.role,
-        job_description: jobDescription,
-        match_score: result.match_score,
-        analysis: result,
-      });
-
-    return NextResponse.json(result);
+    return NextResponse.json({
+      coverLetter,
+    });
 
   } catch (error) {
     console.error(error);
