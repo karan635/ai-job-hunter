@@ -72,7 +72,7 @@ const menu = [
 
     title: "Interview",
 
-    href: "/dashboard/interview",
+    href: "/dashboard/interview-prep",
 
     icon: Mic,
 
