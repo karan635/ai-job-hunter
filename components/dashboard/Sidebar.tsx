@@ -67,7 +67,11 @@ const menu = [
     icon: FilePenLine,
 
   },
-
+  {
+    title: "Cover Letter History",
+    href: "/dashboard/cover-letter-history",
+    icon: History,
+  },
   {
 
     title: "Interview",

@@ -15,7 +15,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { resumeId, jobDescription } = await request.json();
+    const {
+      resumeId,
+      jobDescription,
+      jobTitle,
+      companyName,
+    } = await request.json();
 
     if (!resumeId) {
       return NextResponse.json(
@@ -31,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch selected resume
+    // Fetch selected resume and its analysis
     const { data: resume, error: resumeError } =
       await supabaseAdmin
         .from("resumes")
@@ -62,21 +67,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Generate Cover Letter
     const coverLetter = await generateCoverLetter(
       resumeAnalysis,
       jobDescription
     );
+
+    // Save Cover Letter to Database
+    const { error: saveError } = await supabaseAdmin
+      .from("cover_letters")
+      .insert({
+        user_id: userId,
+        resume_id: resumeId,
+        job_title: jobTitle || null,
+        company_name: companyName || null,
+        content: coverLetter,
+      });
+
+    if (saveError) {
+      console.error(
+        "Failed to save cover letter:",
+        saveError
+      );
+    }
 
     return NextResponse.json({
       coverLetter,
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Cover Letter API Error:", error);
 
     return NextResponse.json(
-      { error: "Something went wrong." },
-      { status: 500 }
+      {
+        error: "Something went wrong.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
