@@ -14,11 +14,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-[#09090f]">
       <Sidebar />
 
-      <main className="ml-72 flex-1 bg-zinc-950">
-        <div className="p-8">
+      <main className="min-h-screen bg-[radial-gradient(circle_at_88%_0%,rgba(112,67,220,0.12),transparent_27%),#09090f] md:ml-72">
+        <div className="p-5 sm:p-7 lg:p-10">
           {children}
         </div>
       </main>

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { analyzeJobMatch } from "@/lib/analyzeJobMatch";
+import { FirecrawlError, scrapeJobDescription } from "@/lib/firecrawl";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,21 +16,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { jobDescription , resumeId } = await request.json();
+    const { jobDescription, jobUrl, resumeId } = await request.json();
 
-    if (!resumeId) {
+    if (typeof resumeId !== "string" || !resumeId) {
       return NextResponse.json(
-      { error: "Resume is required." },
-      { status: 400 }
-      );
-    }
-
-    if (!jobDescription) {
-      return NextResponse.json(
-        { error: "Job description is required." },
+        { error: "Resume is required." },
         { status: 400 }
       );
     }
+
+    const pastedJobDescription =
+      typeof jobDescription === "string" ? jobDescription.trim() : "";
+    const submittedJobUrl = typeof jobUrl === "string" ? jobUrl.trim() : "";
+
+    if (!pastedJobDescription && !submittedJobUrl) {
+      return NextResponse.json(
+        { error: "Paste a job description or provide a job posting URL." },
+        { status: 400 }
+      );
+    }
+
+    const resolvedJobDescription = submittedJobUrl
+      ? await scrapeJobDescription(submittedJobUrl)
+      : pastedJobDescription;
 
     // Get latest analyzed resume
     const { data: resume, error: resumeError } =
@@ -66,7 +75,7 @@ export async function POST(request: NextRequest) {
     // AI Job Match
     const result = await analyzeJobMatch(
       resumeAnalysis,
-      jobDescription
+      resolvedJobDescription
     );
 
     // Save result
@@ -76,7 +85,7 @@ export async function POST(request: NextRequest) {
         resume_id: resume.id,
         company: result.company,
         role: result.role,
-        job_description: jobDescription,
+        job_description: resolvedJobDescription,
         match_score: result.match_score,
         analysis: result,
       });
@@ -85,6 +94,10 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error(error);
+
+    if (error instanceof FirecrawlError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
 
     return NextResponse.json(
       { error: "Something went wrong." },

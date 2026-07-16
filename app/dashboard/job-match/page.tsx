@@ -29,6 +29,7 @@ export default function JobMatchPage() {
   const { user } = useUser();
 
   const [jobDescription, setJobDescription] = useState("");
+  const [jobUrl, setJobUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [result, setResult] = useState<JobMatchResult | null>(null);
@@ -62,8 +63,8 @@ export default function JobMatchPage() {
       return;
     }
 
-    if (!jobDescription.trim()) {
-      alert("Please paste a job description.");
+    if (!jobDescription.trim() && !jobUrl.trim()) {
+      alert("Please paste a job description or enter a job posting URL.");
       return;
     }
 
@@ -77,6 +78,7 @@ export default function JobMatchPage() {
         },
         body: JSON.stringify({
           jobDescription,
+          jobUrl,
           resumeId: selectedResumeId,
         }),
       });
@@ -90,7 +92,7 @@ export default function JobMatchPage() {
       setResult(data);
     } catch (error) {
       console.error(error);
-      alert("Job Match failed.");
+      alert(error instanceof Error ? error.message : "Job Match failed.");
     } finally {
       setLoading(false);
     }
@@ -119,14 +121,26 @@ export default function JobMatchPage() {
 
         <div className="mt-6">
           <label className="mb-3 block text-lg font-semibold text-white">
-            Paste Job Description
+            Job Posting URL <span className="text-sm font-normal text-zinc-400">(optional)</span>
+          </label>
+
+          <input
+            type="url"
+            value={jobUrl}
+            onChange={(e) => setJobUrl(e.target.value)}
+            placeholder="https://company.com/careers/jobs/..."
+            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-white outline-none transition-all duration-300 placeholder:text-zinc-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30"
+          />
+
+          <label className="mb-3 mt-6 block text-lg font-semibold text-white">
+            Paste Job Description <span className="text-sm font-normal text-zinc-400">(optional)</span>
           </label>
 
           <textarea
             rows={14}
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Paste the complete job description here..."
+            placeholder="Paste the complete job description here if you don’t have a URL..."
             className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-5 text-white outline-none transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30"
           />
 

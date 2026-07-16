@@ -19,9 +19,7 @@ export default function CoverLetterPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [selectedResumeId, setSelectedResumeId] = useState("");
 
-  const [companyName, setCompanyName] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
+  const [jobUrl, setJobUrl] = useState("");
 
   const [coverLetter, setCoverLetter] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,18 +50,8 @@ export default function CoverLetterPage() {
       return;
     }
 
-    if (!companyName.trim()) {
-      alert("Please enter the company name.");
-      return;
-    }
-
-    if (!jobTitle.trim()) {
-      alert("Please enter the job title.");
-      return;
-    }
-
-    if (!jobDescription.trim()) {
-      alert("Please paste a job description.");
+    if (!jobUrl.trim()) {
+      alert("Please enter a job posting URL.");
       return;
     }
 
@@ -77,9 +65,7 @@ export default function CoverLetterPage() {
         },
         body: JSON.stringify({
           resumeId: selectedResumeId,
-          companyName,
-          jobTitle,
-          jobDescription,
+          jobUrl,
         }),
       });
 
@@ -94,7 +80,7 @@ export default function CoverLetterPage() {
       setCoverLetter(data.coverLetter);
     } catch (error) {
       console.error(error);
-      alert("Unable to generate cover letter.");
+      alert(error instanceof Error ? error.message : "Unable to generate cover letter.");
     } finally {
       setLoading(false);
     }
@@ -143,48 +129,22 @@ export default function CoverLetterPage() {
           setSelectedResumeId={setSelectedResumeId}
         />
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          <div>
-            <label className="mb-3 block text-lg font-semibold text-white">
-              Company Name
-            </label>
-
-            <input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="e.g. Google"
-              className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-white outline-none focus:border-violet-500"
-            />
-          </div>
-
-          <div>
-            <label className="mb-3 block text-lg font-semibold text-white">
-              Job Title
-            </label>
-
-            <input
-              type="text"
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
-              placeholder="e.g. Frontend Developer"
-              className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-white outline-none focus:border-violet-500"
-            />
-          </div>
-        </div>
-
         <div className="mt-6">
           <label className="mb-3 block text-lg font-semibold text-white">
-            Job Description
+            Job Posting URL
           </label>
 
-          <textarea
-            rows={12}
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Paste the complete job description..."
-            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-5 text-white outline-none focus:border-violet-500"
+          <input
+            type="url"
+            value={jobUrl}
+            onChange={(e) => setJobUrl(e.target.value)}
+            placeholder="https://company.com/careers/jobs/..."
+            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-white outline-none focus:border-violet-500"
           />
+
+          <p className="mt-2 text-sm text-zinc-400">
+            We’ll use Firecrawl to extract the job description from this page.
+          </p>
 
           <Button
             onClick={handleGenerate}

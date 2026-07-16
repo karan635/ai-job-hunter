@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { generateCoverLetter } from "@/lib/generateCoverLetter";
+import { FirecrawlError, scrapeJobDescription } from "@/lib/firecrawl";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,26 +16,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const {
-      resumeId,
-      jobDescription,
-      jobTitle,
-      companyName,
-    } = await request.json();
+    const { resumeId, jobUrl } = await request.json();
 
-    if (!resumeId) {
+    if (typeof resumeId !== "string" || !resumeId) {
       return NextResponse.json(
         { error: "Resume is required." },
         { status: 400 }
       );
     }
 
-    if (!jobDescription) {
+    if (typeof jobUrl !== "string" || !jobUrl.trim()) {
       return NextResponse.json(
-        { error: "Job Description is required." },
+        { error: "A job posting URL is required." },
         { status: 400 }
       );
     }
+
+    const jobDescription = await scrapeJobDescription(jobUrl.trim());
 
     // Fetch selected resume and its analysis
     const { data: resume, error: resumeError } =
@@ -68,7 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate Cover Letter
-    const coverLetter = await generateCoverLetter(
+    const generatedLetter = await generateCoverLetter(
       resumeAnalysis,
       jobDescription
     );
@@ -79,9 +77,9 @@ export async function POST(request: NextRequest) {
       .insert({
         user_id: userId,
         resume_id: resumeId,
-        job_title: jobTitle || null,
-        company_name: companyName || null,
-        content: coverLetter,
+        job_title: generatedLetter.jobTitle,
+        company_name: generatedLetter.companyName,
+        content: generatedLetter.coverLetter,
       });
 
     if (saveError) {
@@ -92,11 +90,15 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      coverLetter,
+      coverLetter: generatedLetter.coverLetter,
     });
 
   } catch (error) {
     console.error("Cover Letter API Error:", error);
+
+    if (error instanceof FirecrawlError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
 
     return NextResponse.json(
       {

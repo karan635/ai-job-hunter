@@ -5,7 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 
 export default function DashboardPreview() {
   return (
-    <section className="relative -mt-24 px-6 pb-24">
+    <section id="workflow" className="relative -mt-8 overflow-hidden bg-[#070710] px-6 pb-14 pt-8 lg:-mt-16 lg:pb-16">
         <div className="absolute inset-0 flex justify-center">
             <div className="h-[500px] w-[500px] rounded-full bg-violet-600/20 blur-[140px]" />
         </div>
@@ -14,14 +14,15 @@ export default function DashboardPreview() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
-        className="mx-auto max-w-6xl"
+        className="dashboard-3d mx-auto max-w-6xl"
       >
-        <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-xl p-8 shadow-2xl">
+        <div className="rounded-3xl border border-white/[0.12] bg-zinc-900/70 p-6 shadow-[0_30px_75px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
 
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">
-              AI Resume Analysis
-            </h2>
+            <div>
+              <p className="text-sm font-medium text-violet-300">Your personalized workspace</p>
+              <h2 className="mt-1 text-2xl font-bold text-white">AI Resume Analysis</h2>
+            </div>
 
             <span className="rounded-full bg-violet-600 px-4 py-1 text-sm text-white">
               Premium AI
