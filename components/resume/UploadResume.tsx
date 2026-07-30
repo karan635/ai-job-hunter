@@ -57,10 +57,10 @@ export default function UploadResume({
   };
 
   return (
-    <div className="rounded-2xl border-2 border-dashed border-zinc-700 bg-zinc-900/40 p-10">
+    <div className="rounded-3xl border-2 border-dashed border-violet-400/30 bg-gradient-to-br from-violet-950/20 to-zinc-900/60 p-10 transition hover:border-violet-400/60">
       <div className="flex flex-col items-center">
 
-        <UploadCloud className="h-12 w-12 text-violet-400" />
+        <div className="rounded-2xl bg-violet-400/10 p-4"><UploadCloud className="h-10 w-10 text-violet-300" /></div><h2 className="mt-5 text-xl font-semibold text-white">Add a resume</h2><p className="mt-2 text-center text-sm text-zinc-400">PDF, DOC, or DOCX — we’ll analyze it for ATS-ready insights.</p>
 
         <input
           ref={inputRef}
@@ -72,7 +72,7 @@ export default function UploadResume({
 
         <Button
           onClick={openFilePicker}
-          className="mt-6 bg-violet-600"
+          className="mt-6 rounded-xl bg-violet-600 px-6 shadow-lg shadow-violet-950/40 hover:bg-violet-500"
         >
           Browse Files
         </Button>

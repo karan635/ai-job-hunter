@@ -99,10 +99,10 @@ export default function JobMatchPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-10">
+    <div className="mx-auto max-w-6xl space-y-8 pb-12">
       {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-white">
+      <div className="relative overflow-hidden rounded-3xl border border-violet-400/20 bg-gradient-to-br from-violet-950/70 via-zinc-900 to-cyan-950/40 p-8 shadow-2xl shadow-violet-950/20">
+        <h1 className="text-3xl font-bold text-white sm:text-4xl">
           🎯 AI Job Match Analyzer
         </h1>
 
@@ -112,7 +112,7 @@ export default function JobMatchPage() {
       </div>
 
       {/* Input Section */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-lg">
+      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-xl shadow-black/10 sm:p-8">
         <ResumeSelector
           resumes={resumes}
           selectedResumeId={selectedResumeId}
@@ -147,7 +147,7 @@ export default function JobMatchPage() {
           <Button
             onClick={handleAnalyze}
             disabled={loading}
-            className="mt-6 w-full rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 py-6 text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50"
+            className="mt-6 w-full rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-500 py-6 text-lg font-semibold text-white shadow-lg shadow-violet-900/30 transition-all duration-300 hover:from-violet-500 hover:to-indigo-400 disabled:opacity-50"
           >
             {loading ? "Analyzing Resume..." : "🚀 Analyze Job Match"}
           </Button>

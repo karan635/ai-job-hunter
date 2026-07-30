@@ -40,7 +40,7 @@ export default function CoverLetterHistoryCard({
   );
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 transition-all hover:border-violet-600">
+    <div className="rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 shadow-lg shadow-black/10 transition-all hover:-translate-y-0.5 hover:border-violet-400">
       <div className="space-y-3">
 
         <div className="flex items-center gap-2">

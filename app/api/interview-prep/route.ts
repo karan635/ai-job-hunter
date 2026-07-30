@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { generateInterviewPrep } from "@/lib/generateInterviewPrep";
+import { FirecrawlError, scrapeJobDescription } from "@/lib/firecrawl";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { resumeId, jobDescription } = await request.json();
+    const { resumeId, jobDescription, jobUrl } = await request.json();
 
     if (!resumeId) {
       return NextResponse.json(
@@ -24,12 +25,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!jobDescription) {
+    const pastedJobDescription = typeof jobDescription === "string" ? jobDescription.trim() : "";
+    const submittedJobUrl = typeof jobUrl === "string" ? jobUrl.trim() : "";
+
+    if (!pastedJobDescription && !submittedJobUrl) {
       return NextResponse.json(
-        { error: "Job Description is required." },
+        { error: "Paste a job description or provide a job posting URL." },
         { status: 400 }
       );
     }
+
+    const resolvedJobDescription = submittedJobUrl
+      ? await scrapeJobDescription(submittedJobUrl)
+      : pastedJobDescription;
 
     // Fetch selected resume
     const { data: resume, error: resumeError } =
@@ -64,13 +72,17 @@ export async function POST(request: NextRequest) {
 
     const interviewPrep = await generateInterviewPrep(
       resumeAnalysis,
-      jobDescription
+      resolvedJobDescription
     );
 
     return NextResponse.json(interviewPrep);
 
   } catch (error) {
     console.error(error);
+
+    if (error instanceof FirecrawlError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
 
     return NextResponse.json(
       { error: "Something went wrong." },

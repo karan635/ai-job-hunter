@@ -17,7 +17,7 @@ export default function JobHistoryCard({
   createdAt,
 }: JobHistoryCardProps) {
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500 hover:shadow-xl hover:shadow-violet-500/10">
+    <div className="rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-400 hover:shadow-xl hover:shadow-violet-500/10">
       <div className="space-y-4">
         <div>
           <div className="flex items-center gap-2 text-violet-400">
@@ -68,7 +68,7 @@ export default function JobHistoryCard({
 
         <Link
           href={`/dashboard/job-history/${id}`}
-          className="block rounded-xl bg-violet-600 py-3 text-center font-semibold text-white transition hover:bg-violet-700"
+          className="block rounded-xl bg-violet-600 py-3 text-center font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500"
         >
           View Report
         </Link>

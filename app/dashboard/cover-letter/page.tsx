@@ -111,9 +111,10 @@ export default function CoverLetterPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-10">
-      <div>
-        <h1 className="text-4xl font-bold text-white">
+    <div className="mx-auto max-w-6xl space-y-8 pb-12">
+      <div className="rounded-3xl border border-violet-400/20 bg-gradient-to-br from-violet-950/70 via-zinc-900 to-indigo-950/50 p-8 shadow-2xl shadow-violet-950/20">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-300">Tailored applications</p>
+        <h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
           ✍️ AI Cover Letter Generator
         </h1>
 
@@ -122,7 +123,7 @@ export default function CoverLetterPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-6 shadow-xl shadow-black/10 sm:p-8">
         <ResumeSelector
           resumes={resumes}
           selectedResumeId={selectedResumeId}
@@ -139,7 +140,7 @@ export default function CoverLetterPage() {
             value={jobUrl}
             onChange={(e) => setJobUrl(e.target.value)}
             placeholder="https://company.com/careers/jobs/..."
-            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-white outline-none focus:border-violet-500"
+            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-white outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20"
           />
 
           <p className="mt-2 text-sm text-zinc-400">
@@ -149,7 +150,7 @@ export default function CoverLetterPage() {
           <Button
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-6 w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+            className="mt-6 w-full rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-500 py-6 text-base shadow-lg shadow-violet-900/30"
           >
             {loading ? "Generating..." : "✨ Generate Cover Letter"}
           </Button>

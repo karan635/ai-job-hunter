@@ -5,9 +5,9 @@ import { Upload } from "lucide-react";
 
 export default function ResumeHeader() {
   return (
-    <div className="mb-8 flex flex-col gap-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur-md md:flex-row md:items-center md:justify-between">
+    <div className="relative mb-8 flex flex-col gap-6 overflow-hidden rounded-3xl border border-violet-400/20 bg-gradient-to-br from-violet-950/70 via-zinc-900 to-cyan-950/40 p-7 shadow-2xl shadow-violet-950/20 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 className="text-3xl font-bold text-white">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-300">Your career foundation</p><h1 className="mt-2 text-3xl font-bold text-white">
           Resume Workspace
         </h1>
 
@@ -16,7 +16,7 @@ export default function ResumeHeader() {
         </p>
       </div>
 
-      <Button className="bg-violet-600 hover:bg-violet-700">
+      <Button className="rounded-xl bg-violet-600 shadow-lg shadow-violet-950/40 hover:bg-violet-500">
         <Upload className="mr-2 h-4 w-4" />
         Upload Resume
       </Button>

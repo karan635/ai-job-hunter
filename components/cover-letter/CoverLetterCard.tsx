@@ -18,8 +18,8 @@ export default function CoverLetterCard({
   loading,
 }: CoverLetterCardProps) {
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-lg">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="rounded-3xl border border-violet-400/20 bg-gradient-to-br from-zinc-900 to-violet-950/20 p-6 shadow-xl shadow-violet-950/10">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-white">
             ✍️ Generated Cover Letter
